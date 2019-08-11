@@ -5,15 +5,20 @@ import ReactDOM from 'react-dom';
 const App = (props) => {
   const [ counter, setCounter ] = useState(0)
 
-  setTimeout(
-    () => setCounter(counter + 1),
-    1000
-  )
+  const increaseByOne = () => setCounter(counter + 1)
 
-  console.log('rendering...', counter)
+  const setToZero = () => setCounter(0)
 
   return (
-    <div>{counter}</div>
+    <div>
+      <div>{counter}</div>
+      <button onClick={increaseByOne}>
+        plus
+      </button>
+      <button onClick={setToZero}>
+        zero
+      </button>
+    </div>
   )
 }
 
