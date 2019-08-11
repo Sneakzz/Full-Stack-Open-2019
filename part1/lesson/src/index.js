@@ -3,35 +3,38 @@ import ReactDOM from 'react-dom';
 
 // This is a React Component called "App"
 const App = (props) => {
-  const [ counter, setCounter ] = useState(0)
-  const setToValue = (value) => setCounter(value)
+  const [clicks, setClicks] = useState({
+    left: 0,
+    right: 0
+  })
+
+  const handleLeftClick = () => {
+    const newClicks = {
+      ...clicks,
+      left: clicks.left + 1
+    }
+    setClicks(newClicks)
+  }
+
+  const handleRightClick = () => {
+    const newClicks = {
+      ...clicks,
+      right: clicks.right + 1
+    }
+    setClicks(newClicks)
+  }
 
   return (
     <div>
-      <Display counter={counter} />
-      <Button
-        onClick={() => setToValue(counter + 1)}
-        text='plus'
-      />
-      <Button
-        onClick={() => setToValue(counter - 1)}
-        text='minus'
-      />
-      <Button
-        onClick={() => setToValue(0)}
-        text='zero'
-      />
+      <div>
+        {clicks.left}
+        <button onClick={handleLeftClick}>left</button>
+        <button onClick={handleRightClick}>right</button>
+        {clicks.right}
+      </div>
     </div>
   )
 }
-
-const Display = ({ counter }) => <div>{counter}</div>
-
-const Button = ({ onClick, text }) => (
-  <button onClick={onClick}>
-    {text}
-  </button>
-)
 
 ReactDOM.render(
   <App />,
