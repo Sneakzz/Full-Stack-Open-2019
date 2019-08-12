@@ -1,19 +1,35 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
-const Header = ({text}) => (
+const Header = ({ text }) => (
   <div>
     <h1>{text}</h1>
   </div>
 )
 
-const Button = ({onClick, text}) => {
+const Button = ({ onClick, text }) => {
   return (
     <button onClick={onClick}>{text}</button>
   )
 }
 
-const Outcome = ({text, value}) => (
+const Statistics = ({good, neutral, bad}) => {
+  let total = good + neutral + bad
+  let average = (good - bad) / total
+  let percentPositive = (good / total) * 100 + '%'
+  return(
+    <div>
+      <Statistic text='good' value={good} />
+      <Statistic text='neutral' value={neutral} />
+      <Statistic text='bad' value={bad} />
+      <Statistic text='all' value={total} />
+      <Statistic text='average' value={average} />
+      <Statistic text='positive' value={percentPositive} />
+    </div>
+  )
+}
+
+const Statistic = ({ text, value }) => (
   <div>
     {text} {value}
   </div>
@@ -24,22 +40,32 @@ const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
-
-  const handleGoodBtn = () => setGood(good + 1)
-  const handleNeutralBtn = () => setNeutral(neutral + 1)
-  const handleBadBtn = () => setBad(bad + 1)
+  
+  const handleBtn = (e) => {
+    switch (e.target.innerText) {
+      case 'good':
+        setGood(good + 1)
+        break
+      case 'neutral':
+        setNeutral(neutral + 1)
+        break
+      case 'bad':
+        setBad(bad + 1)
+        break
+      default:
+        break
+    }
+  }
 
   return (
     <div>
-      <Header text="give feedback" />
-      <Button onClick={handleGoodBtn} text="good" />
-      <Button onClick={handleNeutralBtn} text="neutral" />
-      <Button onClick={handleBadBtn} text="bad" />
+      <Header text='give feedback' />
+      <Button onClick={handleBtn} text='good' />
+      <Button onClick={handleBtn} text='neutral' />
+      <Button onClick={handleBtn} text='bad' />
 
-      <Header text="statistics" />
-      <Outcome text="good" value={good} />
-      <Outcome text="neutral" value={neutral} />
-      <Outcome text="bad" value={bad} />
+      <Header text='statistics' />
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
 }
