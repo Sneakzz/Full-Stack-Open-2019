@@ -52,6 +52,34 @@ const App = (props) => {
   )
 }
 
+// example of how to use hooks like useState and useEffect
+const App2 = (props) => {
+  // this is ok
+  const [age, setAge] = useState(0)
+  const [name, setName] = useState('Juha Tauriainen')
+
+  if (age > 10) {
+    // This does not work
+    // const [foobar, setFoobar] = useState(null)
+  }
+
+  for (let i = 0; i < age; i++) {
+    // also this is not good
+    // const [rightWay, setRightway] = useState(false)
+  }
+
+  const notGood = () => {
+    // and this is also not good
+    // const [x, setX] = useState(-1000)
+  }
+
+  return (
+    <div>
+      example of how to correctly use React hooks
+    </div>
+  )
+}
+
 ReactDOM.render(
   <App />,
   document.getElementById('root')
