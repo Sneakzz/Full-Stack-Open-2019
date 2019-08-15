@@ -5,10 +5,6 @@ const App = (props) => {
   const [selected, setSelected] = useState(0)
   const [votes, setVotes] = useState(new Array(anecdotes.length).fill(0))
 
-  // testing state
-  console.log('general selected', selected)
-  console.log(votes)
-
   const handleNextBtn = () => {
     let randNum = Math.floor((Math.random() * anecdotes.length))
     if (randNum === selected) {
@@ -21,8 +17,6 @@ const App = (props) => {
   const handleVoteBtn = () => {
     const copy = [...votes]
     copy[selected] += 1
-
-    console.log(selected)
 
     setVotes(copy)
   }
