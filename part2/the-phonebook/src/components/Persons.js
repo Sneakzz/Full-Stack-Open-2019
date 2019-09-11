@@ -8,7 +8,7 @@ const Persons = ({ persons, filter }) => {
 
   return (
     filteredPersons.map(person => 
-      <Person key={person.name} person={person} />
+      <Person key={person.id} person={person} />
     )
   )
 };
