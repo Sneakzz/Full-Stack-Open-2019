@@ -7,7 +7,7 @@ const CountryInfo = ({ country }) => {
     </li>
   );
   const flagStyle = {
-    width: "150px",
+    width: "200px",
     height: "150px"
   };
 
