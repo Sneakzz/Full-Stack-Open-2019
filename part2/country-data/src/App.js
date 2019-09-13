@@ -21,9 +21,16 @@ function App() {
 
   return (
     <div>
-      <Filter value={countryName} onChange={countryNameChangeHandler} />
+      <Filter
+        value={countryName} 
+        onChange={countryNameChangeHandler} 
+      />
       
-      <CountriesRenderer countries={countries} countryName={countryName} />
+      <CountriesRenderer 
+        countries={countries} 
+        countryName={countryName}
+        setCountryName={setCountryName}
+      />
     </div>
 
   )

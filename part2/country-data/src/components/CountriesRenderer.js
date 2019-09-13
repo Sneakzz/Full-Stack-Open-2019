@@ -10,10 +10,14 @@ const listToBig = () => {
   )
 };
 
-const listSizeGood = countryList => {
+const listSizeGood = (countryList, setCountryName) => {
   return (
     countryList.map(country =>
-      <Country key={country.numericCode} country={country} />
+      <Country 
+        key={country.numericCode} 
+        country={country} 
+        setCountryName={setCountryName} 
+      />
     )
   )
 };
@@ -24,7 +28,7 @@ const justOne = country => {
   )
 };
 
-const CountriesRenderer = ({ countries, countryName }) => {
+const CountriesRenderer = ({ countries, countryName, setCountryName }) => {
   const filteredCountries = countries.filter(country => {
     return country.name.toLowerCase().includes(countryName.toLowerCase());
   });
@@ -32,7 +36,7 @@ const CountriesRenderer = ({ countries, countryName }) => {
   if (filteredCountries.length > 10) return listToBig()
 
 
-  if (filteredCountries.length > 1) return listSizeGood(filteredCountries);
+  if (filteredCountries.length > 1) return listSizeGood(filteredCountries, setCountryName);
 
   if (filteredCountries.length === 1) return justOne(filteredCountries[0]);
 
