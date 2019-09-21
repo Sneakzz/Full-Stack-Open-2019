@@ -38,6 +38,22 @@ const App = () => {
       });
   };
 
+  const deletePerson = id => {
+    const personToDel = persons.find(p => p.id === id);
+    const answer = window.confirm(`Delete ${personToDel.name} ?`);
+
+    if (answer) {
+      PersonService
+        .remove(id)
+        .then(response => {
+          setPersons(persons.filter(p => p.id !== id));
+        })
+        .catch(error => {
+          console.log('Something went wrong deleting a person from the phonebook');
+        });
+    }
+  }
+
   const newNameChange = event => {
     setNewName(event.target.value);
   };
@@ -70,7 +86,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={persons} filter={filter} />
+      <Persons persons={persons} filter={filter} deleteHandler={deletePerson} />
     </div>
   )
 };
