@@ -43,7 +43,10 @@ const App = () => {
         setPersons(persons.concat(newPerson));
         setNewName('');
         setNewNumber('');
-        setNotification(`Added ${personObj.name}`);
+        setNotification({
+          type: 'notification',
+          message: `Added ${personObj.name}`
+        });
         setTimeout(() => {
           setNotification(null);
         }, 3000);
@@ -60,7 +63,20 @@ const App = () => {
         setPersons(persons.map(person => person.id !== id ? person : newPerson));
         setNewName('');
         setNewNumber('');
-        setNotification(`Number changed from ${person.number} to ${changedPerson.number} for ${person.name}.`);
+        setNotification({
+          type: 'notification',
+          message: `Number changed from ${person.number} to ${changedPerson.number} for ${person.name}.`
+        });
+        setTimeout(() => {
+          setNotification(null);
+        }, 3000);
+      }).catch(error => {
+        // person already deleted before number change
+        setPersons(persons.filter(p => p.id !== id));
+        setNotification({
+          type: 'error',
+          message: `Information of ${person.name} has already been removed from the server.`
+        });
         setTimeout(() => {
           setNotification(null);
         }, 3000);
@@ -78,7 +94,15 @@ const App = () => {
           setPersons(persons.filter(p => p.id !== id));
         })
         .catch(error => {
-          console.log('Something went wrong deleting a person from the phonebook');
+          // person already deleted
+          setPersons(persons.filter(p => p.id !== id));
+          setNotification({
+            type: 'error',
+            message: `Information of ${personToDel.name} has already been removed from the server.`
+          });
+          setTimeout(() => {
+            setNotification(null);
+          }, 3000);
         });
     }
   }
@@ -103,13 +127,16 @@ const App = () => {
     numberChange: newNumberChange
   };
 
-  const Notification = ({ message }) => {
-    if (message === null) {
+  const Notification = ({ content }) => {
+    if (content === null) {
       return null;
     }
 
+    const type = content.type;
+    const message = content.message;
+
     return (
-      <div className='notification'>
+      <div className={type}>
         {message}
       </div>
     )
@@ -119,7 +146,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
-      <Notification message={notification} />
+      <Notification content={notification} />
 
       <Filter value={filter} onChange={filterChange} />
 
