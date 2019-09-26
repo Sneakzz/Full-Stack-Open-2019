@@ -32,6 +32,15 @@ app.get('/', (req, res) => {
   res.status(200).end('<h1>Homepage</h1>');
 });
 
+app.get('/info', (req, res) => {
+  const info = `Phonebook has info for ${persons.length} people`;
+  const date = new Date().toString();
+
+  res.write(`<p>${info}</p>`);
+  res.write(`<p>${date}</p>`);
+  res.status(200).end();
+});
+
 app.get('/api/persons', (req, res) => {
   res.status(200).json(persons);
 });
