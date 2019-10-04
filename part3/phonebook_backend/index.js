@@ -56,6 +56,49 @@ app.get('/api/persons/:id', (req, res) => {
   }
 });
 
+const generateId = () => {
+  const min = 5
+  const max = Number.MAX_SAFE_INTEGER;
+  const newId = Math.floor(Math.random() * (max - min)) + min;
+  return newId;
+}
+
+app.post('/api/persons', (req, res) => {
+  const body = req.body;
+  let AlreadyExists;
+
+  if (!body.name) {
+    return res.status(400).json({
+      error: 'name is missing'
+    });
+  } else {
+    alreadyExists = persons.some(p => p.name === body.name);
+  }
+
+  console.log(alreadyExists);
+  if (alreadyExists) {
+    return res.status(400).json({
+      error: 'name must be unique'
+    });
+  }
+
+  if (!body.number) {
+    return res.status(400).json({
+      error: 'number is missing'
+    });
+  }
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId()
+  };
+
+  persons = persons.concat(person);
+
+  res.status(200).json(person);
+});
+
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id);
   persons = persons.filter(p => p.id !== id);
