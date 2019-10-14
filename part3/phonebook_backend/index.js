@@ -5,7 +5,16 @@ const app = express();
 const PORT = 3001;
 
 app.use(bodyParser.json());
-app.use(morgan('tiny'));
+
+app.use(morgan('tiny', {
+  skip: (req, res) => { return req.method === "POST" }
+}));
+
+morgan.token('body', (req, res) => {return JSON.stringify(req.body)});
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body', {
+  skip: (req, res) => { return req.method !== "POST" }
+}));
 
 let persons = [
   {
@@ -77,7 +86,6 @@ app.post('/api/persons', (req, res) => {
     alreadyExists = persons.some(p => p.name === body.name);
   }
 
-  console.log(alreadyExists);
   if (alreadyExists) {
     return res.status(400).json({
       error: 'name must be unique'
