@@ -1,5 +1,6 @@
 import axios from 'axios';
-const baseUrl = 'http://localhost:3001/notes';
+const baseUrl = 'https://radiant-tor-09871.herokuapp.com/notes';
+//const baseUrl = 'http://localhost:3001/notes';
 
 const getAll = () => {
   const request = axios.get(baseUrl);
