@@ -15,6 +15,12 @@ const App = () => {
     PersonService.getAll()
       .then(persons => {
         setPersons(persons);
+      })
+      .catch(error => {
+        setNotification({
+          type: "error",
+          message: `Could not retrieve data from the server`
+        });
       });
   }, []);
 
