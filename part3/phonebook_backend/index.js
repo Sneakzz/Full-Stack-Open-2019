@@ -1,9 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
 const app = express();
-const PORT = process.env.PORT || 3001;
+const Entry = require('./models/entry');
 
 app.use(cors());
 app.use(express.static('build'));
@@ -56,7 +57,14 @@ app.get('/info', (req, res) => {
 });
 
 app.get('/api/persons', (req, res) => {
-  res.status(200).json(persons);
+  Entry.find({})
+    .then(entries => {
+      res.json(entries.map(entry => entry.toJSON()));
+    })
+    .catch(err => {
+      console.log('-----');
+      console.log('error getting data from the database:', err.message);
+    });
 });
 
 app.get('/api/persons/:id', (req, res) => {
@@ -119,6 +127,7 @@ app.delete('/api/persons/:id', (req, res) => {
   res.status(204).end();
 });
 
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
