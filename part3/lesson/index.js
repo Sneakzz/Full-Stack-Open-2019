@@ -50,8 +50,6 @@ app.get('/api/notes', (req, res) => {
     })
     .catch(err => {
       console.log('something went wrong trying to get notes from the database');
-      mongoose.connection.close();
-      process.exit(1);
     });
 });
 
@@ -62,8 +60,6 @@ app.get('/api/notes/:id', (req, res) => {
     })
     .catch(err => {
       console.log('something went wrong trying to get a note');
-      mongoose.connection.close();
-      process.exit(1);
     });
 });
 
@@ -95,8 +91,6 @@ app.post('/api/notes', (req, res) => {
     })
     .catch(err => {
       console.log('something went wrong saving the note to the database');
-      mongoose.connection.close();
-      process.exit(1);
     });
 });
 
