@@ -64,6 +64,7 @@ app.get('/api/persons', (req, res) => {
     .catch(err => {
       console.log('-----');
       console.log('error getting data from the database:', err.message);
+      res.end();
     });
 });
 
@@ -87,37 +88,26 @@ const generateId = () => {
 
 app.post('/api/persons', (req, res) => {
   const body = req.body;
-  let AlreadyExists;
 
-  if (!body.name) {
+  if(body.name === undefined || body.number === undefined){
     return res.status(400).json({
-      error: 'name is missing'
-    });
-  } else {
-    alreadyExists = persons.some(p => p.name === body.name);
-  }
-
-  if (alreadyExists) {
-    return res.status(400).json({
-      error: 'name must be unique'
+      error: 'name or number missing'
     });
   }
 
-  if (!body.number) {
-    return res.status(400).json({
-      error: 'number is missing'
-    });
-  }
-
-  const person = {
+  const entry = new Entry({
     name: body.name,
-    number: body.number,
-    id: generateId()
-  };
+    number: body.number
+  });
 
-  persons = persons.concat(person);
-
-  res.status(200).json(person);
+  entry.save()
+    .then(savedEntry => {
+      res.json(savedEntry.toJSON());
+    })
+    .catch(err => {
+      console.log('-----');
+      console.log('error saving the newest entry:', err.message);
+    });
 });
 
 app.delete('/api/persons/:id', (req, res) => {
