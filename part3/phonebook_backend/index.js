@@ -107,6 +107,7 @@ app.post('/api/persons', (req, res) => {
     .catch(err => {
       console.log('-----');
       console.log('error saving the newest entry:', err.message);
+      res.end();
     });
 });
 
