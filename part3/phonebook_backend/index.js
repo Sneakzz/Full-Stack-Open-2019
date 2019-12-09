@@ -6,20 +6,6 @@ const cors = require('cors');
 const app = express();
 const Entry = require('./models/entry');
 
-app.use(cors());
-app.use(express.static('build'));
-app.use(bodyParser.json());
-
-app.use(morgan('tiny', {
-  skip: (req, res) => { return req.method === "POST" }
-}));
-
-morgan.token('body', (req, res) => {return JSON.stringify(req.body)});
-
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body', {
-  skip: (req, res) => { return req.method !== "POST" }
-}));
-
 let persons = [
   {
     name: 'Arto Hellas',
@@ -42,6 +28,20 @@ let persons = [
     id: 4
   }
 ];
+
+app.use(express.static('build'));
+app.use(bodyParser.json());
+app.use(cors());
+
+app.use(morgan('tiny', {
+  skip: (req, res) => { return req.method === "POST" }
+}));
+
+morgan.token('body', (req, res) => {return JSON.stringify(req.body)});
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body', {
+  skip: (req, res) => { return req.method !== "POST" }
+}));
 
 app.get('/', (req, res) => {
   res.status(200).end('<h1>Homepage</h1>');
@@ -79,13 +79,6 @@ app.get('/api/persons/:id', (req, res) => {
   }
 });
 
-const generateId = () => {
-  const min = 5
-  const max = Number.MAX_SAFE_INTEGER;
-  const newId = Math.floor(Math.random() * (max - min)) + min;
-  return newId;
-}
-
 app.post('/api/persons', (req, res) => {
   const body = req.body;
 
@@ -111,12 +104,31 @@ app.post('/api/persons', (req, res) => {
     });
 });
 
-app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id);
-  persons = persons.filter(p => p.id !== id);
-
-  res.status(204).end();
+app.delete('/api/persons/:id', (req, res, next) => {
+  Entry.findByIdAndDelete(req.params.id)
+    .then(result => {
+      res.status(204).end();
+    })
+    .catch(err => next(err));
 });
+
+const unknownEndpoint = (req, res) => {
+  return res.status(404).send({ error: 'unknown endpoint' });
+}
+
+app.use(unknownEndpoint);
+
+const errorHandler = (err, req, res, next) => {
+  console.error(err);
+
+  if(err.name === 'CastError' && err.kind === 'ObjectId'){
+    return res.status(400).send({ error: 'malformatted id' });
+  }
+
+  next(err);
+}
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
