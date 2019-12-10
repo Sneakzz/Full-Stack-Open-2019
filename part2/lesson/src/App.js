@@ -54,11 +54,16 @@ const App = () => {
       .then(returnedNote => {
         setNotes(notes.concat(returnedNote));
         setNewNote('');
+      })
+      .catch(err => {
+        setErrorMessage(`Make sure the content of the note is 5 characters or more`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
   };
 
   const handleNoteChange = event => {
-    console.log(event.target.value);
     setNewNote(event.target.value);
   };
 
