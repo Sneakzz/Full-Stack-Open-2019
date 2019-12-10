@@ -37,7 +37,7 @@ app.use(morgan('tiny', {
   skip: (req, res) => { return req.method === "POST" }
 }));
 
-morgan.token('body', (req, res) => {return JSON.stringify(req.body)});
+morgan.token('body', (req, res) => { return JSON.stringify(req.body) });
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body', {
   skip: (req, res) => { return req.method !== "POST" }
@@ -47,13 +47,17 @@ app.get('/', (req, res) => {
   res.status(200).end('<h1>Homepage</h1>');
 });
 
-app.get('/info', (req, res) => {
-  const info = `Phonebook has info for ${persons.length} people`;
-  const date = new Date().toString();
-
-  res.write(`<p>${info}</p>`);
-  res.write(`<p>${date}</p>`);
-  res.status(200).end();
+app.get('/info', (req, res, next) => {
+  //collection total
+  Entry.collection.countDocuments()
+    .then(result => {
+      const info = `Phonebook has info for ${result} people`
+      const date = new Date().toString();
+      res.write(`<p>${info}</p>`);
+      res.write(`<p>${date}</p>`);
+      res.status(200).end();
+    })
+    .catch(err => next(err));
 });
 
 app.get('/api/persons', (req, res) => {
@@ -68,21 +72,22 @@ app.get('/api/persons', (req, res) => {
     });
 });
 
-app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find(p => p.id === id);
-
-  if (person) {
-    res.status(200).json(person);
-  } else {
-    res.status(404).end();
-  }
+app.get('/api/persons/:id', (req, res, next) => {
+  Entry.findById(req.params.id)
+    .then(entry => {
+      if (entry) {
+        res.json(entry.toJSON());
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch(err => next(err));
 });
 
 app.post('/api/persons', (req, res) => {
   const body = req.body;
 
-  if(body.name === undefined || body.number === undefined){
+  if (body.name === undefined || body.number === undefined) {
     return res.status(400).json({
       error: 'name or number missing'
     });
@@ -135,7 +140,7 @@ app.use(unknownEndpoint);
 const errorHandler = (err, req, res, next) => {
   console.error(err);
 
-  if(err.name === 'CastError' && err.kind === 'ObjectId'){
+  if (err.name === 'CastError' && err.kind === 'ObjectId') {
     return res.status(400).send({ error: 'malformatted id' });
   }
 
