@@ -56,7 +56,7 @@ app.get('/api/notes', (req, res) => {
 app.get('/api/notes/:id', (req, res, next) => {
   Note.findById(req.params.id)
     .then(note => {
-      if(note){
+      if (note) {
         res.json(note.toJSON());
       } else {
         res.status(404).end();
@@ -65,21 +65,8 @@ app.get('/api/notes/:id', (req, res, next) => {
     .catch(err => next(err));
 });
 
-const generateId = () => {
-  const maxId = notes.length > 0
-    ? Math.max(...notes.map(n => n.id)) : 0;
-
-  return maxId + 1;
-}
-
-app.post('/api/notes', (req, res) => {
+app.post('/api/notes', (req, res, next) => {
   const body = req.body;
-
-  if (body.content === undefined) {
-    return res.status(400).json({
-      error: 'content missing'
-    });
-  }
 
   const note = new Note({
     content: body.content,
@@ -87,13 +74,13 @@ app.post('/api/notes', (req, res) => {
     date: new Date()
   });
 
-  note.save()
-    .then(savedNote => {
-      res.json(savedNote.toJSON());
+  note
+    .save()
+    .then(savedNote => savedNote.toJSON())
+    .then(savedAndFormattedNote => {
+      res.json(savedAndFormattedNote);
     })
-    .catch(err => {
-      console.log('something went wrong saving the note to the database');
-    });
+    .catch(err => next(err));
 });
 
 app.put('/api/notes/:id', (req, res, next) => {
@@ -128,8 +115,10 @@ app.use(unknownEndpoint);
 const errorHandler = (err, req, res, next) => {
   console.error(err.message);
 
-  if(err.name === 'CastError' && err.kind === 'ObjectId'){
+  if (err.name === 'CastError' && err.kind === 'ObjectId') {
     return res.status(400).send({ error: 'malformatted id' });
+  } else if (err.name === 'ValidationError') {
+    return res.status(400).json({ error: err.message });
   }
 
   next(err);
