@@ -60,11 +60,11 @@ const App = () => {
       .catch(error => {
         setNotification({
           type: 'error',
-          message: error
+          message: error.response.data.error
         });
         setTimeout(() => {
           setNotification(null);
-        }, 3000);
+        }, 5000);
       });
   };
 
