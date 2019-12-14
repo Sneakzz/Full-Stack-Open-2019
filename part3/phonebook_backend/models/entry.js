@@ -23,12 +23,14 @@ const entrySchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    uniqueCaseInsensitive: true
+    uniqueCaseInsensitive: true,
+    minlength: 3
   },
   number: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    minlength: 8
   }
 });
 
