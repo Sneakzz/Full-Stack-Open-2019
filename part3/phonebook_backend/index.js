@@ -6,41 +6,18 @@ const cors = require('cors');
 const app = express();
 const Entry = require('./models/entry');
 
-let persons = [
-  {
-    name: 'Arto Hellas',
-    number: '040-123456',
-    id: 1
-  },
-  {
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-    id: 2
-  },
-  {
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-    id: 3
-  },
-  {
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-    id: 4
-  }
-];
-
 app.use(express.static('build'));
 app.use(bodyParser.json());
 app.use(cors());
 
 app.use(morgan('tiny', {
-  skip: (req, res) => { return req.method === "POST" }
+  skip: (req) => { return req.method === 'POST'; }
 }));
 
-morgan.token('body', (req, res) => { return JSON.stringify(req.body) });
+morgan.token('body', (req) => { return JSON.stringify(req.body); });
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body', {
-  skip: (req, res) => { return req.method !== "POST" }
+  skip: (req) => { return req.method !== 'POST'; }
 }));
 
 app.get('/', (req, res) => {
@@ -51,7 +28,7 @@ app.get('/info', (req, res, next) => {
   //collection total
   Entry.collection.countDocuments()
     .then(result => {
-      const info = `Phonebook has info for ${result} people`
+      const info = `Phonebook has info for ${result} people`;
       const date = new Date().toString();
       res.write(`<p>${info}</p>`);
       res.write(`<p>${date}</p>`);
@@ -110,7 +87,7 @@ app.put('/api/persons/:id', (req, res, next) => {
 
   const entry = {
     number: body.number
-  }
+  };
 
   Entry.findByIdAndUpdate(req.params.id, entry, { new: true })
     .then(updatedEntry => {
@@ -121,7 +98,7 @@ app.put('/api/persons/:id', (req, res, next) => {
 
 app.delete('/api/persons/:id', (req, res, next) => {
   Entry.findByIdAndDelete(req.params.id)
-    .then(result => {
+    .then(() => {
       res.status(204).end();
     })
     .catch(err => next(err));
@@ -129,7 +106,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
 
 const unknownEndpoint = (req, res) => {
   return res.status(404).send({ error: 'unknown endpoint' });
-}
+};
 
 app.use(unknownEndpoint);
 
@@ -140,11 +117,11 @@ const errorHandler = (err, req, res, next) => {
     return res.status(400).send({ error: 'malformatted id' });
   }
   if (err.name === 'ValidationError') {
-    return res.status(400).send({error: err.message});
+    return res.status(400).send({ error: err.message });
   }
 
   next(err);
-}
+};
 
 app.use(errorHandler);
 

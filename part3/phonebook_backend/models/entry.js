@@ -9,7 +9,7 @@ console.log('-----');
 console.log('Trying to connect to MongoDB...');
 
 mongoose.connect(url, { useNewUrlParser: true })
-  .then(res => {
+  .then(() => {
     console.log('-----');
     console.log('Succesfully connected to MongoDB');
   })
