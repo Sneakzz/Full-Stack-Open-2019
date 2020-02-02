@@ -6,38 +6,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
-
-const blogSchema = mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-    unique: true,
-    uniqueCaseInsensitive: true,
-    minlength: 5
-  },
-  author: {
-    type: String,
-    required: true,
-    minlength: 5
-  },
-  url: {
-    type: String,
-    required: true,
-    unique: true,
-    uniqueCaseInsensitive: true,
-    minlength: 5
-  },
-  likes: {
-    type: Number,
-    min: 0,
-    max: Number.MAX_SAFE_INTEGER
-  }
-});
-
-blogSchema.plugin(uniqueValidator);
-
-const Blog = mongoose.model('Blog', blogSchema);
+const Blog = require('./models/blog');
 
 console.log('Connecting to MongoDB..');
 
